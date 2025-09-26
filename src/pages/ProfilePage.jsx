@@ -1,7 +1,9 @@
-import { Navbar, Container, Button } from 'react-bootstrap'
+import { Navbar, Container, Button, Row } from 'react-bootstrap'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useLocalStorage from 'use-local-storage';
+import ProfileSideBar from '../components/ProfileSideBar';
+import ProfileMidBody from '../components/ProfileMidBody'
 
 export default function ProfilePage() {
     const [authToken, setAuthToken] = useLocalStorage("authToken", "");
@@ -18,7 +20,7 @@ export default function ProfilePage() {
     }
     return (
         <>
-            <Navbar bg="light">
+            {/* <Navbar bg="light">
                 <Container>
                     <Navbar.Brand href='/'>
                         <i
@@ -32,10 +34,17 @@ export default function ProfilePage() {
                         </Button>
                     </Navbar.Collapse>
                 </Container>
-            </Navbar>
-
+            </Navbar> */}
+            {/* 
             <Container className="mt-3">
                 <h2>Your profile</h2>
+            </Container> */}
+
+            <Container>
+                <Row>
+                    <ProfileSideBar handleLogout={handleLogout} />
+                    <ProfileMidBody />
+                </Row>
             </Container>
         </>
     )
