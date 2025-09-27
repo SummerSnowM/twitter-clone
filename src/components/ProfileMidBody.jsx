@@ -1,17 +1,37 @@
 import { Button, Col, Image, Nav, Row } from 'react-bootstrap';
 import ProfilePostCard from './ProfilePostCard';
+import { jwtDecode } from 'jwt-decode';
+import { useEffect, useState } from 'react';
 
 export default function ProfileMidBody() {
-    const url = 'https://pbs.twing.com/profile_banners/83072625/1602845571/1500x500';
-    const pic = 'https://pbs.twing.com/profile_images/1587405892437221376/h167J1b2_400x400.jpg';
+    const [posts, setPosts] = useState([]);
+
+    const fetchPosts = (userId) => {
+        fetch(
+            `https://edd094d0-8e19-471b-bd57-24af5069bce6-00-ytyw0t7ntnoi.pike.replit.dev/posts/user/${userId}`
+        )
+            .then((response) => response.json())
+            .then((data) => setPosts(data))
+            .catch((error) => console.error("Error", error));
+    }
+
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            const userId = decodedToken.id;
+            fetchPosts(userId);
+        }
+    }, [])
 
     return (
         <Col sm={6} className="bg-light" style={{ border: "1px solid lightgrey" }}>
-            <Image src={url} fluid />
+            <Image src='/src/assets/wallpaper_tweet.png' style={{ height: '240px', width: '1500px' }} fluid />
             <br />
             <Image
-                src={pic}
-                roundedCirclestyle={{
+                src='/src/assets/tweet_pfp.jpg'
+                roundedCircle
+                style={{
                     width: 150,
                     position: "absolute",
                     top: "140px",
@@ -59,7 +79,9 @@ export default function ProfileMidBody() {
                     <Nav.Link eventKey="/link-4">Likes</Nav.Link>
                 </Nav.Item>
             </Nav>
-            <ProfilePostCard />
+            {posts.map((post) => (
+                <ProfilePostCard key={post.id} content={post.content} postId={post.id} />
+            ))}
         </Col>
     )
 }
