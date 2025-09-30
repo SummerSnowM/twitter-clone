@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const BASE_URL = "https://1085ab8b-9cdf-40a0-b5ae-b142953a0e1f-00-11z4i8cj9136d.pike.replit.dev";
 
@@ -26,7 +26,18 @@ export const savePost = createAsyncThunk(
         }
 
         const response = await axios.post(`${BASE_URL}/posts`, data)
-        return response.data;
+        return response.json();
+    }
+)
+
+export const searchPosts = createAsyncThunk(
+    'posts/searchPost',
+    async (postContent) => {
+        const data = {
+            q: postContent
+        }
+        const response = await axios.post(`${BASE_URL}/posts/search`, data)
+        return response.data.data;
     }
 )
 
@@ -41,6 +52,9 @@ const postsSlice = createSlice({
         });
         builder.addCase(savePost.fulfilled, (state, action) => {
             state.posts = [action.payload, ...state.posts];
+        });
+        builder.addCase(searchPosts.fulfilled, (state, action) => {
+            state.posts = action.payload;
         });
     }
 })

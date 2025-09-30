@@ -1,11 +1,12 @@
-import { Button, Col, Image, Nav, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Image, Nav, Row, Spinner, Form } from 'react-bootstrap';
 import ProfilePostCard from './ProfilePostCard';
 import { jwtDecode } from 'jwt-decode';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchPostsByUser } from '../features/posts/postsSlice';
+import { fetchPostsByUser, searchPosts } from '../features/posts/postsSlice';
 
 export default function ProfileMidBody() {
+    const [searchTerm, setSearchTerm] = useState("");
 
     const dispatch = useDispatch();
     const posts = useSelector(store => store.posts.posts)
@@ -75,6 +76,17 @@ export default function ProfileMidBody() {
                     <Nav.Link eventKey="/link-4">Likes</Nav.Link>
                 </Nav.Item>
             </Nav>
+            <Form onSubmit={e => {
+                e.preventDefault();
+                dispatch(searchPosts(searchTerm))
+            }}>
+                <Form.Control
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    type="text"
+                />
+                <Button type="submit">Search</Button>
+            </Form>
             {loading && (
                 <Spinner animation="border" className="ms-3 mt-3" variant="primary" />
             )}
