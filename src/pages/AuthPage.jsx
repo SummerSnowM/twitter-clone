@@ -1,8 +1,10 @@
 import { Col, Image, Row, Button, Modal, Form } from 'react-bootstrap'
 import {
+    GoogleAuthProvider,
     createUserWithEmailAndPassword,
     getAuth,
     signInWithEmailAndPassword,
+    signInWithPopup,
 } from 'firebase/auth';
 import { useContext, useState, useEffect } from 'react'
 import { AuthContext } from '../components/AuthProvider';
@@ -29,11 +31,16 @@ export default function AuthPage() {
     useEffect(() => {
         if (currentUser) navigate('/profile');
     }, [currentUser, navigate])
-    // useEffect(() => {
-    //     if (authToken) {
-    //         navigate('/profile');
-    //     }
-    // }, [authToken, navigate])
+
+    const provider = new GoogleAuthProvider();
+    const handleGoogleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const handleSignUp = async (e) => {
         e.preventDefault();
@@ -72,7 +79,7 @@ export default function AuthPage() {
                 <h2 className="my-5" style={{ fontSize: 31 }}>Join Twitter Today.</h2>
 
                 <Col sm={5} className="d-grid gap-2">
-                    <Button className="rounded-pill" variant="outline-dark">
+                    <Button className="rounded-pill" variant="outline-dark" onClick={handleGoogleLogin}>
                         <i className="bi bi-google"></i> Sign up with Google
                     </Button>
                     <Button className="rounded-pill" variant="outline-dark">
