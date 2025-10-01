@@ -1,7 +1,8 @@
 import { Button, Col, Image, Nav, Row, Spinner, Form } from 'react-bootstrap';
 import ProfilePostCard from './ProfilePostCard';
-import { jwtDecode } from 'jwt-decode';
-import { useEffect, useState } from 'react';
+// import { jwtDecode } from 'jwt-decode';
+import { useEffect, useState, useContext } from 'react';
+import { AuthContext } from './AuthProvider';
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPostsByUser, searchPosts } from '../features/posts/postsSlice';
 
@@ -9,17 +10,19 @@ export default function ProfileMidBody() {
     const [searchTerm, setSearchTerm] = useState("");
 
     const dispatch = useDispatch();
+    const { currentUser } = useContext(AuthContext);
     const posts = useSelector(store => store.posts.posts)
     const loading = useSelector(store => store.posts.loading)
 
     useEffect(() => {
-        const token = localStorage.getItem("authToken");
-        if (token) {
-            const decodedToken = jwtDecode(token);
-            const userId = decodedToken.id;
-            dispatch(fetchPostsByUser(userId))
-        }
-    }, [dispatch])
+        // const token = localStorage.getItem("authToken");
+        // if (token) {
+        //     const decodedToken = jwtDecode(token);
+        //     const userId = decodedToken.id;
+        //     dispatch(fetchPostsByUser(userId))
+        // }
+        dispatch(fetchPostsByUser(currentUser.uid));
+    }, [dispatch, currentUser])
 
     return (
         <Col sm={6} className="bg-light" style={{ border: "1px solid lightgrey" }}>
@@ -91,7 +94,7 @@ export default function ProfileMidBody() {
                 <Spinner animation="border" className="ms-3 mt-3" variant="primary" />
             )}
             {posts.map((post) => (
-                <ProfilePostCard key={post.id} content={post.content} postId={post.id} />
+                <ProfilePostCard key={post.id} post={post} />
             ))}
         </Col>
     )
